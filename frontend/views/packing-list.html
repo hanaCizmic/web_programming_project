@@ -1,0 +1,120 @@
+<header class="app-header">
+    <a href="#dashboard" class="logo">✈ TripMate</a>
+
+    <nav aria-label="Main navigation">
+        <a href="#dashboard">My trips</a>
+        <a href="#expenses">Expenses</a>
+        <a href="#packing-list" aria-current="page">Packing list</a>
+        <button type="button" id="logout-button">Log out</button>
+    </nav>
+</header>
+
+<main class="packing-page">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">GET READY TO GO</p>
+            <h1>Packing list</h1>
+            <p>Keep everything you need organized before you leave.</p>
+        </div>
+
+        <button type="button" id="add-packing-item-button" class="primary-button">
+            + Add item
+        </button>
+    </section>
+
+    <section class="packing-trip-section">
+        <label for="packing-trip-filter">Choose a trip</label>
+        <select id="packing-trip-filter" name="trip_id">
+            <option value="">Select a trip</option>
+            <!-- Trip options will be populated here -->
+        </select>
+    </section>
+
+    <section class="packing-progress-section">
+        <h2>Your packing progress</h2>
+        <p id="packing-progress">0 of 0 items packed</p>
+        <progress id="packing-progress-bar" value="0" max="100">
+            0%
+        </progress>
+    </section>
+
+    <section class="packing-list-section">
+        <h2>Items to pack</h2>
+
+        <div id="packing-empty-state">
+            <h3>Your packing list is empty</h3>
+            <p>Add items you need to remember for your trip.</p>
+        </div>
+
+        <div id="packing-items-list">
+            <!-- Packing items will be put here -->
+        </div>
+    </section>
+
+    <dialog id="packing-item-dialog" aria-labelledby="packing-dialog-title">
+        <form id="packing-item-form">
+            <h2 id="packing-dialog-title">Add packing item</h2>
+
+            <div class="form-field">
+                <label for="packing-trip">Trip</label>
+                <select id="packing-trip" name="trip_id" required>
+                    <option value="">Select a trip</option>
+                    <!-- Trip options will be populated here -->
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label for="packing-item-name">Item name</label>
+                <input
+                    type="text"
+                    id="packing-item-name"
+                    name="name"
+                    placeholder="e.g. Passport"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="packing-category">Category</label>
+                <select id="packing-category" name="category" required>
+                    <option value="">Select category</option>
+                    <option value="documents">Documents</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="toiletries">Toiletries</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="medication">Personal essentials</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label for="packing-quantity">Quantity</label>
+                <input
+                    type="number"
+                    id="packing-quantity"
+                    name="quantity"
+                    min="1"
+                    value="1"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="packing-notes">Notes (optional)</label>
+                <textarea
+                    id="packing-notes"
+                    name="notes"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="Any details to remember?"
+                ></textarea>
+            </div>
+
+            <div class="dialog-actions">
+                <button type="button" id="cancel-packing-button">Cancel</button>
+                <button type="submit" class="primary-button">Save item</button>
+            </div>
+        </form>
+    </dialog>
+</main>

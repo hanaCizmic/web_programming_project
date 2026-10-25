@@ -1,0 +1,159 @@
+<header class="app-header">
+    <a href="#dashboard" class="logo">✈ TripMate</a>
+
+    <nav aria-label="Main navigation">
+        <a href="#dashboard" id="back-to-dashboard">
+            &larr; My trips
+        </a>
+        <a href="#expenses">Expenses</a>
+        <a href="#packing-list">Packing list</a>
+        <button type="button" id="logout-button">Log out</button>
+    </nav>
+</header>
+
+<main class="trip-details-page">
+    <section class="trip-header">
+        <p class="eyebrow">YOUR ADVENTURE</p>
+        <h1 id="trip-name">Trip details</h1>
+        <p id="trip-destination"></p>
+
+        <div class="trip-dates">
+            <span id="trip-start-date"></span>
+            <span id="trip-end-date"></span>
+        </div>
+
+        <p id="trip-description"></p>
+
+        <div class="trip-header-actions">
+            <button type="button" id="edit-trip-button">Edit trip</button>
+            <button type="button" id="delete-trip-button">Delete trip</button>
+        </div>
+        
+        <dialog id="edit-trip-dialog">
+            <form id="edit-trip-form">
+                <h2>Edit trip</h2>
+
+                <div class="form-field">
+                    <label for="edit-trip-name">Trip name</label>
+                    <input type="text" id="edit-trip-name" required maxlength="100">
+                </div>
+
+                <div class="form-field">
+                    <label for="edit-destination">Destination</label>
+                    <input type="text" id="edit-destination" required maxlength="150">
+                </div>
+
+                <div class="form-field">
+                    <label for="edit-start-date">Start date</label>
+                    <input type="date" id="edit-start-date" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="edit-end-date">End date</label>
+                    <input type="date" id="edit-end-date" required>
+                </div>
+
+                <div class="dialog-actions">
+                    <button type="button" id="cancel-edit-trip">Cancel</button>
+                    <button type="submit" class="primary-button">Save changes</button>
+                </div>
+            </form>
+        </dialog>
+
+    </section>
+
+    <section class="weather-section" aria-labelledby="weather-heading">
+        <h2 id="weather-heading">Destination weather</h2>
+        <p id="weather-location">
+            Weather information will appear here when connected to a weather API.
+        </p>
+        <div id="weather-content">
+            <!-- Weather information will be rendered here -->
+        </div>
+    </section>
+
+    <section class="itinerary-section" aria-labelledby="itinerary-heading">
+        <div class="section-heading">
+            <div>
+                <h2 id="itinerary-heading">Daily itinerary</h2>
+                <p>Organize what you want to do each day.</p>
+            </div>
+
+            <button
+                type="button"
+                id="add-activity-button"
+                class="primary-button"
+            >
+                + Add activity
+            </button>
+        </div>
+
+        <div id="itinerary-list">
+            <!-- Activity cards will be rendered here -->
+        </div>
+
+        <div id="empty-itinerary">
+            <h3>No activities planned yet</h3>
+            <p>Add your first activity to start planning this trip.</p>
+        </div>
+    </section>
+
+    <dialog id="activity-dialog" aria-labelledby="activity-dialog-title">
+        <form id="activity-form">
+            <h2 id="activity-dialog-title">Add an activity</h2>
+
+            <div class="form-field">
+                <label for="activity-title">Activity name</label>
+                <input
+                    type="text"
+                    id="activity-title"
+                    name="title"
+                    placeholder="e.g. Visit the Colosseum"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="activity-date">Date</label>
+                <input type="date" id="activity-date" name="activity_date" required>
+            </div>
+
+            <div class="form-field">
+                <label for="activity-time">Time (optional)</label>
+                <input type="time" id="activity-time" name="activity_time">
+            </div>
+
+            <div class="form-field">
+                <label for="activity-location">Location (optional)</label>
+                <input
+                    type="text"
+                    id="activity-location"
+                    name="location"
+                    maxlength="200"
+                    placeholder="Where will it happen?"
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="activity-notes">Notes (optional)</label>
+                <textarea
+                    id="activity-notes"
+                    name="notes"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="Anything you need to remember?"
+                ></textarea>
+            </div>
+
+            <div class="dialog-actions">
+                <button type="button" id="cancel-activity-button">
+                    Cancel
+                </button>
+                <button type="submit" class="primary-button">
+                    Save activity
+                </button>
+            </div>
+        </form>
+    </dialog>
+</main>

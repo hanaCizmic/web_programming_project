@@ -1,0 +1,98 @@
+  <header class="app-header">
+    <a href="#dashboard" class="logo">✈ TripMate</a>
+
+    <nav aria-label="Main navigation">
+        <a href="#dashboard" id="dashboard-nav">My trips</a>
+        <a href="#expenses" id="expenses-nav">Expenses</a>
+        <a href="#packing-list" id="packing-nav">Packing list</a>
+        <button type="button" id="logout-button">Log out</button>
+    </nav>
+</header>
+
+<main class="dashboard-page">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">YOUR TRAVEL SPACE</p>
+            <h1>My trips</h1>
+            <p>All your adventures, organized in one place.</p>
+        </div>
+
+        <button type="button" id="create-trip-btn" class="primary-button">
+            + Create trip
+        </button>
+    </section>
+
+    <section class="trips-section" aria-labelledby="trips-heading">
+        <h2 id="trips-heading">Your adventures</h2>
+
+        <div id="empty-state">
+            <h3>No trips yet!</h3>
+            <p>Your next adventure starts with a plan.</p>
+            <button type="button" id="empty-create-trip-btn">
+                Create your first trip
+            </button>
+        </div>
+
+        <div id="trips-list" class="trips-list">
+            <!-- Trip cards will be rendered here -->
+        </div>
+    </section>
+
+    <dialog id="trip-dialog" aria-labelledby="trip-dialog-title">
+        <form id="trip-form">
+            <h2 id="trip-dialog-title">Create a new trip</h2>
+
+            <div class="form-field">
+                <label for="trip-name">Trip name</label>
+                <input
+                    type="text"
+                    id="trip-name"
+                    name="name"
+                    placeholder="e.g. Summer adventure"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="destination">Main destination</label>
+                <input
+                    type="text"
+                    id="destination"
+                    name="destination"
+                    placeholder="e.g. Rome, Italy"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="start-date">Start date</label>
+                <input type="date" id="start-date" name="start_date" required>
+            </div>
+
+            <div class="form-field">
+                <label for="end-date">End date</label>
+                <input type="date" id="end-date" name="end_date" required>
+            </div>
+
+            <div class="form-field">
+                <label for="trip-description">Description (optional)</label>
+                <textarea
+                    id="trip-description"
+                    name="description"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="What is this trip about?"
+                ></textarea>
+            </div>
+
+            <div class="dialog-actions">
+                <button type="button" id="cancel-trip-btn">Cancel</button>
+                <button type="submit" id="save-trip-btn" class="primary-button">
+                    Create trip
+                </button>
+            </div>
+        </form>
+    </dialog>
+</main>
