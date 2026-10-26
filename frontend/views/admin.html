@@ -1,0 +1,121 @@
+<header class="app-header">
+    <a href="#dashboard" class="logo">✈ TripMate</a>
+
+    <nav aria-label="Admin navigation">
+        <a href="#dashboard">My trips</a>
+        <a href="#admin" aria-current="page">Administration</a>
+        <button type="button" id="logout-button">Log out</button>
+    </nav>
+</header>
+
+<main class="admin-page">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">TRIPMATE MANAGEMENT</p>
+            <h1>Admin dashboard</h1>
+            <p>Manage user accounts and oversee the platform.</p>
+        </div>
+    </section>
+
+    <section class="admin-summary" aria-label="Platform overview">
+        <article>
+            <h2>Total users</h2>
+            <p id="admin-user-count">—</p>
+        </article>
+
+        <article>
+            <h2>Total trips</h2>
+            <p id="admin-trip-count">—</p>
+        </article>
+
+        <article>
+            <h2>Total activities</h2>
+            <p id="admin-activity-count">—</p>
+        </article>
+    </section>
+
+    <section class="admin-users-section">
+        <h2>User management</h2>
+
+        <div class="admin-filters">
+            <label for="user-search">Search users</label>
+            <input
+                type="search"
+                id="user-search"
+                name="search"
+                placeholder="Search by name or email"
+            >
+
+            <label for="user-role-filter">Filter by role</label>
+            <select id="user-role-filter" name="role">
+                <option value="">All roles</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div id="admin-users-empty-state">
+            <p>User information will appear here when connected to the backend.</p>
+        </div>
+
+        <div class="admin-table-wrapper">
+            <table id="admin-users-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Joined</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="admin-users-list">
+                    <!-- User rows will be rendered here -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <dialog id="edit-user-dialog" aria-labelledby="edit-user-title">
+        <form id="edit-user-form">
+            <h2 id="edit-user-title">Edit user</h2>
+
+            <input type="hidden" id="edit-user-id" name="id">
+
+            <div class="form-field">
+                <label for="edit-user-name">Full name</label>
+                <input
+                    type="text"
+                    id="edit-user-name"
+                    name="name"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="edit-user-email">Email address</label>
+                <input
+                    type="email"
+                    id="edit-user-email"
+                    name="email"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="edit-user-role">Role</label>
+                <select id="edit-user-role" name="role" required>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="dialog-actions">
+                <button type="button" id="cancel-edit-user-button">Cancel</button>
+                <button type="submit" class="primary-button">Save changes</button>
+            </div>
+        </form>
+    </dialog>
+</main>

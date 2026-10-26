@@ -1,0 +1,86 @@
+<main class="auth-page">
+    <section class="auth-intro">
+        <a href="#login" class="logo">✈ TripMate</a>
+
+        <div class="intro-content">
+            <p class="eyebrow">YOUR NEXT ADVENTURE STARTS HERE</p>
+            <h1>Every journey<br>starts with a plan.</h1>
+            <p>
+                Organize your trips, plan your activities,
+                track your expenses, and keep everything
+                you need in one place.
+            </p>
+        </div>
+
+        <p class="intro-footer">Plan less. Explore more.</p>
+    </section>
+
+    <section class="auth-form-section">
+        <div class="auth-card">
+            <h2>Welcome to TripMate</h2>
+            <p class="auth-subtitle">
+                Sign in to continue planning your adventures.
+            </p>
+
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="login-tab">
+                    Log in
+                </button>
+                <button type="button" class="auth-tab" id="register-tab">
+                    Create account
+                </button>
+            </div>
+
+            <form id="auth-form">
+                <div class="form-field" id="name-field" hidden>
+                    <label for="name">Full name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        autocomplete="name"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <p id="auth-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" class="primary-button">
+                    Log in
+                </button>
+            </form>
+
+            <p class="auth-switch">
+                New to TripMate?
+                <button type="button" id="switch-auth">
+                    Create an account
+                </button>
+            </p>
+        </div>
+    </section>
+</main>
