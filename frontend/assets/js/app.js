@@ -18,6 +18,7 @@ async function loadView(viewName) {
 
         const html = await response.text();
         app.innerHTML = html;
+        document.body.classList.toggle("no-login-scroll", viewName === "login");
 
         // Set up the functionality for the page we loaded
         
@@ -165,9 +166,17 @@ function initDashboard() {
             const destination = document.getElementById("destination").value.trim();
             const startDate = document.getElementById("start-date").value;
             const endDate = document.getElementById("end-date").value;
+            const budget = Number(document.getElementById("trip-budget").value);
+            const currency = document.getElementById("trip-currency").value;
+            const description = document.getElementById("trip-description").value.trim();
 
             if (endDate < startDate) {
                 alert("The end date cannot be before the start date.");
+                return;
+            }
+
+            if (budget < 0 || !Number.isFinite(budget)) {
+                alert("Please enter a valid trip budget.");
                 return;
             }
 
@@ -176,7 +185,10 @@ function initDashboard() {
                 name: tripName,
                 destination: destination,
                 startDate: startDate,
-                endDate: endDate
+                endDate: endDate,
+                budget: budget,
+                currency: currency,
+                description: description
             };
 
             trips.push(trip);
@@ -532,6 +544,7 @@ function displayExpenses() {
     let total = 0;
     let visibleCount = 0;
 
+    // Calculate expenses and display expense history
     for (let i = 0; i < expenses.length; i++) {
         const expense = expenses[i];
 
@@ -592,13 +605,29 @@ function displayExpenses() {
     }
 
     emptyState.hidden = visibleCount > 0;
+
+    // Display total spent
     totalSpent.textContent = total.toFixed(2);
 
-    // Budget is not implemented yet, so show a clear placeholder
-    totalBudget.textContent = "Not set";
-    remainingBudget.textContent = "Not calculated";
-}
+    // Find the selected trip
+    const selectedTripData = trips.find(function (trip) {
+        return trip.id === Number(selectedTrip);
+    });
 
+    if (selectedTripData && selectedTripData.budget !== undefined) {
+        const budget = Number(selectedTripData.budget);
+        const remaining = budget - total;
+
+        totalBudget.textContent =
+            budget.toFixed(2) + " " + selectedTripData.currency;
+
+        remainingBudget.textContent =
+            remaining.toFixed(2) + " " + selectedTripData.currency;
+    } else {
+        totalBudget.textContent = "Select one trip";
+        remainingBudget.textContent = "Select one trip";
+    }
+}
 
 function initPackingList() {
     const addButton = document.getElementById("add-packing-item-button");

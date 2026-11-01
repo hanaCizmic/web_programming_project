@@ -76,6 +76,23 @@ How AI was used: Copilot suggested a simpler approach using concepts covered in 
 What was kept, changed, or rejected: Removed unnecessary storage helpers and browser storage from the beginner-level implementation. Kept trip information in a simple JavaScript array for the current prototype, leaving persistent storage for the planned PHP and MySQL backend.
 What was learned: How to choose an implementation that matches the concepts learned in class, why simpler code can be easier to maintain and explain, and why an in-memory array cannot replace persistent database storage.
 
+Session 9 — Adding Custom Methods to DAO Classes
+
+Tool: GitHub Copilot Chat
+Task: Implement additional database retrieval methods in the TripDao and ActivityDao classes.
+Main prompt: Asked Copilot to help implement methods for retrieving upcoming trips belonging to a specific user and finding activities scheduled for a particular date within a trip.
+How AI was used: Copilot explained how to write SQL SELECT queries with WHERE conditions, use named parameters, and pass parameter values safely through the existing BaseDao query method.
+What was kept, changed, or rejected: Used the suggested approach for `get_upcoming_by_user_id()` in TripDao and `get_by_date()` in ActivityDao. Reviewed the SQL queries and adjusted them to match the existing table and column names.
+What was learned: How to filter database results using multiple conditions, how to use named parameters in prepared statements, and how custom DAO methods can extend the reusable functionality provided by BaseDao.
+
+Session 10 — Implementing Expense and Packing Item Queries
+
+Tool: GitHub Copilot Chat
+Task: Add methods for calculating trip expenses and retrieving packing items that have not yet been packed.
+Main prompt: Asked Copilot to help write methods that calculate the total expenses for a selected trip and retrieve only the unpacked items from its packing checklist.
+How AI was used: Copilot explained how to use SQL aggregate functions such as `SUM()` and how to filter records using conditions in a WHERE clause. It also explained how to handle cases where a query returns no matching expenses.
+What was kept, changed, or rejected: Used the suggested approach for `get_total_by_trip_id()` in ExpenseDao, including `COALESCE()` to return zero when no expenses exist. Also implemented `get_unpacked_by_trip_id()` in PackingItemDao using a condition on the `is_packed` column. Tested both methods using the DAO test script.
+What was learned: How SQL aggregate functions work, how to handle empty query results, and how to retrieve only the records needed for a particular application feature.
 Where the AI Was Wrong or Needed Correction
 
 Issue 1 — JavaScript Error Between Pages
@@ -104,6 +121,24 @@ What was wrong: Copilot initially suggested a more complicated implementation th
 How it was noticed: The implementation included concepts that had not yet been covered in class and made the code harder to understand and explain.
 How it was fixed: The implementation was simplified to use variables, arrays, objects, functions, conditional statements, event listeners, and fetch(). Browser storage and unnecessary helper functions were removed from the current version.
 What was learned: Code should be appropriate for the project's current stage and the developer's understanding. A simpler implementation can be easier to explain and maintain, while persistent storage can be implemented later using the planned PHP and MySQL backend.
+
+Issue 3 — Incorrect SQL Column Name
+
+Tool: GitHub Copilot Chat
+Task: Implement a custom method for retrieving unpacked items in PackingItemDao.
+What was wrong: Copilot initially suggested using a column name that did not match the actual database schema.
+How it was noticed: The query failed when tested because the referenced column did not exist in the `packing_items` table.
+How it was fixed: Checked the SQL table definition and corrected the query to use the existing `is_packed` column.
+What was learned: AI-generated SQL must always be compared with the actual database structure because even small naming differences can cause queries to fail.
+
+Issue 4 — Incorrect Handling of Empty Expense Results
+
+Tool: GitHub Copilot Chat
+Task: Implement a method for calculating the total expenses associated with a trip.
+What was wrong: The initial suggestion used `SUM(amount)` without handling the case where a trip had no expenses. This could return `NULL` instead of a numeric zero.
+How it was noticed: Reviewed the query and considered what would happen when no expense records existed for a trip.
+How it was fixed: Used SQL's `COALESCE()` function with `SUM(amount)` so that an empty result is returned as zero.
+What was learned: Database queries should account for empty results and edge cases, not only situations where matching records already exist.
 
 Future entries:
 Add entries as AI assistanceis used.

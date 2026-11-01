@@ -1,0 +1,12 @@
+{
+    "name": "tripmate/backend",
+    "description": "Backend for the TripMate travel planning application",
+    "authors": [
+        {
+            "name": "Hana Cizmic"
+        }
+    ],
+    "require": {
+        "flightphp/core": "^3.19"
+    }
+}
