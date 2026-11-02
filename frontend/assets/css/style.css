@@ -45,6 +45,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body.no-login-scroll {
+    overflow: hidden;
+}
+
 button,
 input,
 select,
@@ -435,7 +439,7 @@ dialog form {
             rgba(20, 38, 48, 0.3),
             rgba(20, 38, 48, 0.72)
         ),
-        url("../static/travel.jpg") center / cover no-repeat;
+        url("../../static/travel.jpg") center / cover no-repeat;
 }
 
 .auth-intro::after {
