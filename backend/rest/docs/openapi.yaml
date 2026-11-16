@@ -1,0 +1,1536 @@
+openapi: 3.0.3
+info:
+  title: TripMate REST API
+  version: 1.0.0
+  description: |
+    OpenAPI documentation for the implemented TripMate FlightPHP routes.
+    Updates use PATCH and accept partial objects. No authentication is
+    currently implemented.
+servers:
+  - url: http://127.0.0.1:8000
+    description: Local PHP development server
+tags:
+  - name: Users
+  - name: Trips
+  - name: Destinations
+  - name: Activities
+  - name: Expenses
+  - name: Packing items
+  - name: Weather
+paths:
+  /weather:
+    get:
+      tags: [Weather]
+      summary: Get current weather for a destination
+      description: Retrieves current conditions from the configured weather provider.
+      operationId: getCurrentWeather
+      parameters:
+        - name: destination
+          in: query
+          required: true
+          description: City or destination name to resolve.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 200
+          example: Paris, France
+      responses:
+        '200':
+          description: Current weather returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WeatherResult'
+              example:
+                data:
+                  location:
+                    name: Paris
+                    region: Ile-de-France
+                    country: France
+                    local_time: '2026-11-14 17:00'
+                  current:
+                    last_updated: '2026-11-14 16:45'
+                    temperature_c: 12.4
+                    feels_like_c: 11.8
+                    condition: Partly cloudy
+                    condition_icon: //cdn.weatherapi.com/weather/64x64/day/116.png
+                    humidity_percent: 67
+                    wind_kph: 13.0
+                    wind_direction: W
+                    precipitation_mm: 0.0
+                    uv: 1.0
+        '400':
+          description: Missing or invalid destination parameter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: destination query parameter is required.
+        '404':
+          description: No weather location matched the requested destination.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: No weather location matched the requested destination.
+        '502':
+          description: The provider connection failed, rejected the request, or returned invalid data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: The weather provider returned an invalid response.
+        '503':
+          description: Weather service configuration, provider availability, or provider quota issue.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: The weather provider is temporarily unavailable.
+        '504':
+          description: The weather provider did not respond before the request timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: The weather provider timed out. Please try again later.
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      operationId: listUsers
+      responses:
+        '200':
+          description: Users returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+              example:
+                data:
+                  - id: 1
+                    name: Test User
+                    email: test@example.com
+                    role: user
+                    created_at: '2026-11-14 10:30:00'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Users]
+      summary: Create a user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+            example:
+              name: Test User
+              email: test@example.com
+              password: ExamplePass123
+      responses:
+        '201':
+          description: User created. The password hash is not returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+              example:
+                data:
+                  id: 2
+                  name: Test User
+                  email: test@example.com
+                  role: user
+                  created_at: '2026-11-14 10:30:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Users]
+      summary: Get a user
+      operationId: getUser
+      responses:
+        '200':
+          description: User returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+              example:
+                data:
+                  id: 1
+                  name: Test User
+                  email: test@example.com
+                  role: user
+                  created_at: '2026-11-14 10:30:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Users]
+      summary: Partially update a user
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPatch'
+            example:
+              name: Updated User
+      responses:
+        '200':
+          description: User updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+              example:
+                data:
+                  id: 1
+                  name: Updated User
+                  email: test@example.com
+                  role: user
+                  created_at: '2026-11-14 10:30:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Users]
+      summary: Delete a user
+      operationId: deleteUser
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /trips:
+    get:
+      tags: [Trips]
+      summary: List trips
+      operationId: listTrips
+      responses:
+        '200':
+          description: Trips returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trip'
+              example:
+                data:
+                  - id: 1
+                    user_id: 1
+                    name: Summer in Italy
+                    destination: Rome, Italy
+                    start_date: '2027-07-10'
+                    end_date: '2027-07-17'
+                    budget: '1500.00'
+                    currency: EUR
+                    description: A summer holiday in Italy
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Trips]
+      summary: Create a trip
+      operationId: createTrip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripCreate'
+            example:
+              user_id: 1
+              name: Summer in Italy
+              destination: Rome, Italy
+              start_date: '2027-07-10'
+              end_date: '2027-07-17'
+              budget: 1500
+              currency: EUR
+              description: A summer holiday in Italy
+      responses:
+        '201':
+          description: Trip created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trip'
+              example:
+                data:
+                  id: 1
+                  user_id: 1
+                  name: Summer in Italy
+                  destination: Rome, Italy
+                  start_date: '2027-07-10'
+                  end_date: '2027-07-17'
+                  budget: '1500.00'
+                  currency: EUR
+                  description: A summer holiday in Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /trips/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Trips]
+      summary: Get a trip
+      operationId: getTrip
+      responses:
+        '200':
+          description: Trip returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trip'
+              example:
+                data:
+                  id: 1
+                  user_id: 1
+                  name: Summer in Italy
+                  destination: Rome, Italy
+                  start_date: '2027-07-10'
+                  end_date: '2027-07-17'
+                  budget: '1500.00'
+                  currency: EUR
+                  description: A summer holiday in Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Trips]
+      summary: Partially update a trip
+      operationId: updateTrip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripPatch'
+            example:
+              budget: 1750
+      responses:
+        '200':
+          description: Trip updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trip'
+              example:
+                data:
+                  id: 1
+                  user_id: 1
+                  name: Summer in Italy
+                  destination: Rome, Italy
+                  start_date: '2027-07-10'
+                  end_date: '2027-07-17'
+                  budget: '1750.00'
+                  currency: EUR
+                  description: A summer holiday in Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Trips]
+      summary: Delete a trip
+      operationId: deleteTrip
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /destinations:
+    get:
+      tags: [Destinations]
+      summary: List destinations
+      operationId: listDestinations
+      responses:
+        '200':
+          description: Destinations returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Destination'
+              example:
+                data:
+                  - id: 1
+                    trip_id: 1
+                    name: Rome
+                    country: Italy
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Destinations]
+      summary: Create a destination
+      operationId: createDestination
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationCreate'
+            example:
+              trip_id: 1
+              name: Rome
+              country: Italy
+      responses:
+        '201':
+          description: Destination created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Destination'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  name: Rome
+                  country: Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /destinations/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Destinations]
+      summary: Get a destination
+      operationId: getDestination
+      responses:
+        '200':
+          description: Destination returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Destination'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  name: Rome
+                  country: Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Destinations]
+      summary: Partially update a destination
+      operationId: updateDestination
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationPatch'
+            example:
+              country: Italy
+      responses:
+        '200':
+          description: Destination updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Destination'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  name: Rome
+                  country: Italy
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Destinations]
+      summary: Delete a destination
+      operationId: deleteDestination
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /activities:
+    get:
+      tags: [Activities]
+      summary: List activities
+      operationId: listActivities
+      responses:
+        '200':
+          description: Activities returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+              example:
+                data:
+                  - id: 1
+                    trip_id: 1
+                    destination_id: 1
+                    title: Visit the Colosseum
+                    description: Explore the historic landmark
+                    activity_date: '2027-07-11'
+                    start_time: '10:00:00'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Activities]
+      summary: Create an activity
+      operationId: createActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCreate'
+            example:
+              trip_id: 1
+              destination_id: 1
+              title: Visit the Colosseum
+              description: Explore the historic landmark
+              activity_date: '2027-07-11'
+              start_time: '10:00'
+      responses:
+        '201':
+          description: Activity created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Activity'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  destination_id: 1
+                  title: Visit the Colosseum
+                  description: Explore the historic landmark
+                  activity_date: '2027-07-11'
+                  start_time: '10:00:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /activities/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Activities]
+      summary: Get an activity
+      operationId: getActivity
+      responses:
+        '200':
+          description: Activity returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Activity'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  destination_id: 1
+                  title: Visit the Colosseum
+                  description: Explore the historic landmark
+                  activity_date: '2027-07-11'
+                  start_time: '10:00:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Activities]
+      summary: Partially update an activity
+      operationId: updateActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityPatch'
+            example:
+              title: Updated activity
+      responses:
+        '200':
+          description: Activity updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Activity'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  destination_id: 1
+                  title: Updated activity
+                  description: Explore the historic landmark
+                  activity_date: '2027-07-11'
+                  start_time: '10:00:00'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Activities]
+      summary: Delete an activity
+      operationId: deleteActivity
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /expenses:
+    get:
+      tags: [Expenses]
+      summary: List expenses
+      operationId: listExpenses
+      responses:
+        '200':
+          description: Expenses returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Expense'
+              example:
+                data:
+                  - id: 1
+                    trip_id: 1
+                    category: Accommodation
+                    amount: '300.00'
+                    currency: EUR
+                    expense_date: '2027-07-10'
+                    description: Hotel booking
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Expenses]
+      summary: Create an expense
+      operationId: createExpense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseCreate'
+            example:
+              trip_id: 1
+              category: Accommodation
+              amount: 300
+              currency: EUR
+              expense_date: '2027-07-10'
+              description: Hotel booking
+      responses:
+        '201':
+          description: Expense created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Expense'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  category: Accommodation
+                  amount: '300.00'
+                  currency: EUR
+                  expense_date: '2027-07-10'
+                  description: Hotel booking
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /expenses/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Expenses]
+      summary: Get an expense
+      operationId: getExpense
+      responses:
+        '200':
+          description: Expense returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Expense'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  category: Accommodation
+                  amount: '300.00'
+                  currency: EUR
+                  expense_date: '2027-07-10'
+                  description: Hotel booking
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Expenses]
+      summary: Partially update an expense
+      operationId: updateExpense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpensePatch'
+            example:
+              amount: 325
+      responses:
+        '200':
+          description: Expense updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Expense'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  category: Accommodation
+                  amount: '325.00'
+                  currency: EUR
+                  expense_date: '2027-07-10'
+                  description: Hotel booking
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Expenses]
+      summary: Delete an expense
+      operationId: deleteExpense
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /packing-items:
+    get:
+      tags: [Packing items]
+      summary: List packing items
+      operationId: listPackingItems
+      responses:
+        '200':
+          description: Packing items returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PackingItem'
+              example:
+                data:
+                  - id: 1
+                    trip_id: 1
+                    item_name: Passport
+                    is_packed: 1
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [Packing items]
+      summary: Create a packing item
+      operationId: createPackingItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackingItemCreate'
+            example:
+              trip_id: 1
+              item_name: Passport
+              is_packed: false
+      responses:
+        '201':
+          description: Packing item created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PackingItem'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  item_name: Passport
+                  is_packed: 0
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /packing-items/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Packing items]
+      summary: Get a packing item
+      operationId: getPackingItem
+      responses:
+        '200':
+          description: Packing item returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PackingItem'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  item_name: Passport
+                  is_packed: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [Packing items]
+      summary: Partially update a packing item
+      operationId: updatePackingItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackingItemPatch'
+            example:
+              is_packed: true
+      responses:
+        '200':
+          description: Packing item updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PackingItem'
+              example:
+                data:
+                  id: 1
+                  trip_id: 1
+                  item_name: Passport
+                  is_packed: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Packing items]
+      summary: Delete a packing item
+      operationId: deletePackingItem
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Positive integer entity ID.
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+  responses:
+    BadRequest:
+      description: Invalid request body, field value, or ID.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: amount must be greater than zero.
+    NotFound:
+      description: The requested record does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Resource not found.
+    InternalServerError:
+      description: Unexpected application or database error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Internal server error.
+    DeleteSuccess:
+      description: Record deleted.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteSuccess'
+          example:
+            message: Resource deleted successfully.
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Resource not found.
+    WeatherResult:
+      type: object
+      required: [location, current]
+      properties:
+        location:
+          type: object
+          required: [name, region, country, local_time]
+          properties:
+            name:
+              type: string
+            region:
+              type: string
+            country:
+              type: string
+            local_time:
+              type: string
+              description: Provider local time formatted as YYYY-MM-DD HH:MM.
+        current:
+          type: object
+          required:
+            - last_updated
+            - temperature_c
+            - feels_like_c
+            - condition
+            - condition_icon
+            - humidity_percent
+            - wind_kph
+            - wind_direction
+            - precipitation_mm
+            - uv
+          properties:
+            last_updated:
+              type: string
+              description: Provider update time formatted as YYYY-MM-DD HH:MM.
+            temperature_c:
+              type: number
+            feels_like_c:
+              type: number
+            condition:
+              type: string
+            condition_icon:
+              type: string
+              format: uri-reference
+            humidity_percent:
+              type: integer
+              minimum: 0
+              maximum: 100
+            wind_kph:
+              type: number
+            wind_direction:
+              type: string
+            precipitation_mm:
+              type: number
+            uv:
+              type: number
+    DeleteSuccess:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          example: Resource deleted successfully.
+    User:
+      type: object
+      required: [id, name, email, role, created_at]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          maxLength: 100
+          example: Test User
+        email:
+          type: string
+          format: email
+          maxLength: 150
+          example: test@example.com
+        role:
+          type: string
+          maxLength: 30
+          example: user
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2026-11-14 10:30:00'
+      description: password_hash is intentionally omitted from API responses.
+    UserCreate:
+      type: object
+      additionalProperties: false
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          minLength: 8
+          description: Hashed by the service before storage.
+    UserPatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          minLength: 8
+    Trip:
+      type: object
+      required: [id, user_id, name, destination, start_date, end_date, budget, currency, description]
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        destination:
+          type: string
+          maxLength: 150
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        budget:
+          type: string
+          description: MySQL DECIMAL amount returned by PDO.
+          example: '1500.00'
+        currency:
+          type: string
+          maxLength: 3
+          example: EUR
+        description:
+          type: string
+          nullable: true
+    TripCreate:
+      type: object
+      additionalProperties: false
+      required: [user_id, name, destination, start_date, end_date]
+      properties:
+        user_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        destination:
+          type: string
+          minLength: 1
+          maxLength: 150
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        budget:
+          type: number
+          minimum: 0
+          maximum: 99999999.99
+          multipleOf: 0.01
+          default: 0
+        currency:
+          type: string
+          pattern: '^[A-Za-z]{3}$'
+          default: BAM
+        description:
+          type: string
+          nullable: true
+    TripPatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        user_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        destination:
+          type: string
+          minLength: 1
+          maxLength: 150
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        budget:
+          type: number
+          minimum: 0
+          maximum: 99999999.99
+          multipleOf: 0.01
+        currency:
+          type: string
+          pattern: '^[A-Za-z]{3}$'
+        description:
+          type: string
+          nullable: true
+    Destination:
+      type: object
+      required: [id, trip_id, name, country]
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 150
+        country:
+          type: string
+          maxLength: 100
+          nullable: true
+    DestinationCreate:
+      type: object
+      additionalProperties: false
+      required: [trip_id, name]
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        country:
+          type: string
+          maxLength: 100
+          nullable: true
+    DestinationPatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        country:
+          type: string
+          maxLength: 100
+          nullable: true
+    Activity:
+      type: object
+      required: [id, trip_id, destination_id, title, description, activity_date, start_time]
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        destination_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+          maxLength: 150
+        description:
+          type: string
+          nullable: true
+        activity_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+          nullable: true
+    ActivityCreate:
+      type: object
+      additionalProperties: false
+      required: [trip_id, title, activity_date]
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        destination_id:
+          type: integer
+          minimum: 1
+          nullable: true
+        title:
+          type: string
+          minLength: 1
+          maxLength: 150
+        description:
+          type: string
+          nullable: true
+        activity_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+          nullable: true
+          description: Accepts HH:MM or HH:MM:SS.
+    ActivityPatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        destination_id:
+          type: integer
+          minimum: 1
+          nullable: true
+        title:
+          type: string
+          minLength: 1
+          maxLength: 150
+        description:
+          type: string
+          nullable: true
+        activity_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+          nullable: true
+          description: Accepts HH:MM or HH:MM:SS.
+    Expense:
+      type: object
+      required: [id, trip_id, category, amount, currency, expense_date, description]
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        category:
+          type: string
+          maxLength: 100
+        amount:
+          type: string
+          description: MySQL DECIMAL amount returned by PDO.
+          example: '300.00'
+        currency:
+          type: string
+          maxLength: 3
+        expense_date:
+          type: string
+          format: date
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+    ExpenseCreate:
+      type: object
+      additionalProperties: false
+      required: [trip_id, category, amount, expense_date]
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        category:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: number
+          exclusiveMinimum: 0
+          minimum: 0
+          maximum: 99999999.99
+          multipleOf: 0.01
+        currency:
+          type: string
+          pattern: '^[A-Za-z]{3}$'
+          default: BAM
+        expense_date:
+          type: string
+          format: date
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+    ExpensePatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        category:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: number
+          exclusiveMinimum: 0
+          minimum: 0
+          maximum: 99999999.99
+          multipleOf: 0.01
+        currency:
+          type: string
+          pattern: '^[A-Za-z]{3}$'
+        expense_date:
+          type: string
+          format: date
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+    PackingItem:
+      type: object
+      required: [id, trip_id, item_name, is_packed]
+      properties:
+        id:
+          type: integer
+        trip_id:
+          type: integer
+        item_name:
+          type: string
+          maxLength: 150
+        is_packed:
+          type: integer
+          enum: [0, 1]
+    PackingItemCreate:
+      type: object
+      additionalProperties: false
+      required: [trip_id, item_name]
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        item_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        is_packed:
+          oneOf:
+            - type: boolean
+            - type: integer
+              enum: [0, 1]
+          default: false
+    PackingItemPatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        trip_id:
+          type: integer
+          minimum: 1
+        item_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        is_packed:
+          oneOf:
+            - type: boolean
+            - type: integer
+              enum: [0, 1]
