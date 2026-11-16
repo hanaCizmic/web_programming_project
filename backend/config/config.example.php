@@ -6,6 +6,7 @@ class Config
     public static function DB_NAME()     { return self::get_env('DB_NAME', 'tripmate'); }
     public static function DB_USER()     { return self::get_env('DB_USER', 'root'); }
     public static function DB_PASSWORD() { return self::get_env('DB_PASSWORD', ''); }
+    public static function WEATHER_API_KEY() { return self::get_env('WEATHER_API_KEY', ''); }
 
     /**
      * Environment variables (set on the server) win over the default values above.

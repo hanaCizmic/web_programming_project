@@ -1,0 +1,378 @@
+### Get all users
+GET http://localhost:8000/users
+
+### Create a user
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "name": "API Test User",
+    "email": "apitest@tripmate.com",
+    "password": "TestPassword123"
+}
+
+### Update a user
+PATCH http://localhost:8000/users/3
+Content-Type: application/json
+
+{
+    "name": "Updated API User"
+}
+
+### Delete a user
+DELETE http://localhost:8000/users/3
+
+### Get all trips
+GET http://localhost:8000/trips
+### Get trip by ID
+GET http://localhost:8000/trips/1
+
+### Create a trip
+POST http://localhost:8000/trips
+Content-Type: application/json
+
+{
+    "user_id": 1,
+    "name": "API Test Trip",
+    "destination": "Paris, France",
+    "start_date": "2027-08-01",
+    "end_date": "2027-08-07",
+    "budget": 1200,
+    "currency": "EUR",
+    "description": "Testing trip creation"
+}
+
+### Update a trip
+PATCH http://localhost:8000/trips/3
+Content-Type: application/json
+
+{
+    "name": "Updated Paris Trip",
+    "budget": 1350
+}
+
+### Delete a trip
+DELETE http://localhost:8000/trips/3
+
+### Get all destinations
+GET http://localhost:8000/destinations
+### Get destination by ID
+GET http://localhost:8000/destinations/1
+
+### Create a destination
+POST http://localhost:8000/destinations
+Content-Type: application/json
+
+{
+    "trip_id": 1,
+    "name": "Venice",
+    "country": "Italy"
+}
+
+### DESTINATIONS
+
+### 1. Update destination
+PATCH http://localhost:8000/destinations/4
+Content-Type: application/json
+
+{
+    "name": "Updated Venice"
+}
+
+### 2. Delete destination
+DELETE http://localhost:8000/destinations/4
+
+
+### ACTIVITIES
+
+### 3. Get all activities
+GET http://localhost:8000/activities
+
+### 4. Get activity by ID
+GET http://localhost:8000/activities/1
+
+
+### EXPENSES
+
+### 5. Get all expenses
+GET http://localhost:8000/expenses
+
+### 6. Get expense by ID
+GET http://localhost:8000/expenses/1
+
+
+### PACKING ITEMS
+
+### 7. Get all packing items
+GET http://localhost:8000/packing-items
+
+### 8. Get packing item by ID
+GET http://localhost:8000/packing-items/1
+
+
+### ACTIVITIES — Create
+POST http://localhost:8000/activities
+Content-Type: application/json
+
+{
+    "trip_id": 1,
+    "destination_id": 1,
+    "title": "Visit the Vatican",
+    "description": "Explore Vatican City",
+    "activity_date": "2027-07-12",
+    "start_time": "09:00"
+}
+
+
+### EXPENSES — Create
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+    "trip_id": 1,
+    "category": "Transport",
+    "amount": 75,
+    "currency": "EUR",
+    "expense_date": "2027-07-12",
+    "description": "Train tickets"
+}
+
+
+### PACKING ITEMS — Create
+POST http://localhost:8000/packing-items
+Content-Type: application/json
+
+{
+    "trip_id": 1,
+    "item_name": "Sunglasses",
+    "is_packed": 0
+}
+
+
+### ACTIVITIES — Update
+PATCH http://localhost:8000/activities/5
+Content-Type: application/json
+
+{
+    "title": "Updated Vatican Visit",
+    "start_time": "10:00"
+}
+
+### ACTIVITIES — Delete
+DELETE http://localhost:8000/activities/5
+
+
+### EXPENSES — Update
+PATCH http://localhost:8000/expenses/4
+Content-Type: application/json
+
+{
+    "amount": 90,
+    "description": "Updated train tickets"
+}
+
+### EXPENSES — Delete
+DELETE http://localhost:8000/expenses/4
+
+
+### PACKING ITEMS — Update
+PATCH http://localhost:8000/packing-items/6
+Content-Type: application/json
+
+{
+    "item_name": "Sunglasses and case",
+    "is_packed": 1
+}
+
+### PACKING ITEMS — Delete
+DELETE http://localhost:8000/packing-items/6
+
+### Missing user
+GET http://localhost:8000/users/999
+
+### Missing trip
+GET http://localhost:8000/trips/999
+
+### Missing destination
+GET http://localhost:8000/destinations/999
+
+### Missing activity
+GET http://localhost:8000/activities/999
+
+### Missing expense
+GET http://localhost:8000/expenses/999
+
+### Missing packing item
+GET http://localhost:8000/packing-items/999
+
+### Invalid trip date
+POST http://localhost:8000/trips
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "name": "Invalid Test",
+  "destination": "Nowhere",
+  "start_date": "2027-02-30",
+  "end_date": "2027-03-05",
+  "budget": 100,
+  "currency": "EUR"
+}
+
+### Missing destination name
+POST http://localhost:8000/destinations
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "country": "Italy"
+}
+
+### Invalid activity date
+POST http://localhost:8000/activities
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "destination_id": 1,
+  "title": "Invalid Test",
+  "activity_date": "not-a-date",
+  "start_time": "10:00"
+}
+
+### Negative expense amount
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "category": "Test",
+  "amount": -10,
+  "currency": "EUR",
+  "expense_date": "2027-07-12"
+}
+
+### Zero expense amount (expect 400)
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+    "trip_id": 1,
+    "category": "Test",
+    "amount": 0,
+    "currency": "EUR",
+    "expense_date": "2027-07-12"
+}
+
+### Missing packing item name
+POST http://localhost:8000/packing-items
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "is_packed": 0
+}
+
+### Unknown field in trip
+POST http://localhost:8000/trips
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "name": "Unknown Field Test",
+  "destination": "London",
+  "start_date": "2027-09-01",
+  "end_date": "2027-09-05",
+  "budget": 500,
+  "currency": "EUR",
+  "random_field": "should not be accepted"
+}
+
+### Unknown field in expense
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "category": "Food",
+  "amount": 20,
+  "currency": "EUR",
+  "expense_date": "2027-07-12",
+  "random_field": "should not be accepted"
+}
+
+### Unknown field in packing item
+POST http://localhost:8000/packing-items
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "item_name": "Test item",
+  "is_packed": 0,
+  "random_field": "should not be accepted"
+}
+
+### Malformed JSON - Trip (expect 400)
+POST http://localhost:8000/trips
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "name": "Broken JSON",
+  "destination": "London",
+}
+
+### Malformed JSON - Expense (expect 400)
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+  "trip_id": 1,
+  "category": "Food",
+  "amount": 20,
+}
+
+### Trip with non-existent user
+POST http://localhost:8000/trips
+Content-Type: application/json
+
+{
+  "user_id": 99999,
+  "name": "Invalid Foreign Key Test",
+  "destination": "London",
+  "start_date": "2027-09-01",
+  "end_date": "2027-09-05",
+  "budget": 500,
+  "currency": "EUR"
+}
+
+### Expense with non-existent trip
+POST http://localhost:8000/expenses
+Content-Type: application/json
+
+{
+  "trip_id": 99999,
+  "category": "Food",
+  "amount": 20,
+  "currency": "EUR",
+  "expense_date": "2027-07-12"
+}
+
+### Non-existent API route
+GET http://localhost:8000/this-route-does-not-exist
+
+### Weather - valid destination (expect 200; requires WEATHER_API_KEY)
+GET http://localhost:8000/weather?destination=Paris
+Accept: application/json
+
+### Weather - missing destination (expect 400)
+GET http://localhost:8000/weather
+Accept: application/json
+
+### Weather - empty destination (expect 400)
+GET http://localhost:8000/weather?destination=
+Accept: application/json
+
+### Weather - invalid destination (expect 404)
+GET http://localhost:8000/weather?destination=ThisPlaceDoesNotExist123456
+Accept: application/json

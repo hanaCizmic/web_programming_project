@@ -40,7 +40,7 @@ How AI was used: Copilot explained how to combine linear-gradient() with a backg
 What was kept, changed, or rejected: Used the explanation to understand how the overlay works and how to adjust the background styling to achieve the desired appearance.
 What was learned: How CSS background layers work, how transparency is controlled with rgba(), and how background-size: cover and background positioning affect the appearance of an image.
 
- Session 5 — General CSS and JavaScript Assistance
+Session 5 — General CSS and JavaScript Assistance
 
 Tool: GitHub Copilot Chat
 Task: Complete and understand parts of the CSS and JavaScript files during the development of TripMate.
@@ -49,7 +49,7 @@ How AI was used: Copilot explained CSS properties, selectors, background styling
 What was kept, changed, or rejected: Used suggestions that matched the existing project structure and adapted the code to work with the HTML elements and IDs already present in TripMate. Some suggestions required adjustments to match the intended design and functionality.
 What was learned: How CSS styling connects to HTML, how JavaScript interacts with page elements, and how to use AI explanations to understand code rather than copying unfamiliar solutions without reviewing them.
 
- Session 6 — Implementing Trip Creation
+Session 6 — Implementing Trip Creation
 
 Tool: GitHub Copilot Chat
 Task: Implement the functionality for creating and displaying trips on the dashboard.
@@ -58,7 +58,7 @@ How AI was used: Copilot generated an implementation using arrays, objects, func
 What was kept, changed, or rejected: Reviewed the suggested code and adapted it to the existing HTML structure. The Create Trip buttons were connected to the same form, and the implementation was kept simple using an array to hold trip information during the current session.
 What was learned: How to collect form values, create an object representing a trip, add it to an array, validate dates, and display information dynamically.
 
- Session 7 — Loading Views Without Refreshing the Page
+Session 7 — Loading Views Without Refreshing the Page
 
 Tool: GitHub Copilot Chat
 Task: Implement navigation between TripMate views without refreshing the entire browser page.
@@ -67,7 +67,7 @@ How AI was used: Copilot suggested using `fetch()` to load HTML fragments and `a
 What was kept, changed, or rejected: Retained the approach of loading HTML into the existing application container. Reviewed the implementation to ensure that functions associated with a particular page were called only when that view was loaded.
 What was learned: How asynchronous JavaScript works with `fetch()`, how HTML fragments can be inserted into an existing page, and why page-specific JavaScript must account for elements that are not present in every view.
 
- Session 8 — Simplifying the JavaScript Implementation
+Session 8 — Simplifying the JavaScript Implementation
 
 Tool: GitHub Copilot Chat
 Task: Make the JavaScript easier to understand.
@@ -94,6 +94,43 @@ How AI was used: Copilot explained how to use SQL aggregate functions such as `S
 What was kept, changed, or rejected: Used the suggested approach for `get_total_by_trip_id()` in ExpenseDao, including `COALESCE()` to return zero when no expenses exist. Also implemented `get_unpacked_by_trip_id()` in PackingItemDao using a condition on the `is_packed` column. Tested both methods using the DAO test script.
 What was learned: How SQL aggregate functions work, how to handle empty query results, and how to retrieve only the records needed for a particular application feature.
 Where the AI Was Wrong or Needed Correction
+
+Milestone 3
+Session 11 — Creating the REST API Structure and Required Files
+
+Tool: GitHub Copilot Chat  
+Task: Understand and create the backend file structure required for implementing the TripMate REST API using FlightPHP.  
+Main prompt: Asked Copilot to help identify the files and folders needed for Milestone 3 and explain how to organize the REST API routes, services, and documentation.  
+How AI was used: Copilot explained the purpose of the REST API entry point, route files, service classes, and API documentation. It helped identify how these components should be organized and connected within the existing backend structure.  
+What was kept, changed, or rejected: Used the suggested structure as a guide for creating the required folders and files. Adapted the structure to the existing TripMate project and kept the DAO classes and database connection separate from the REST API services and routes.  
+What was learned: How to organize a PHP REST API, how FlightPHP routes connect frontend requests to backend services, and why separating routes, services, and database access makes an application easier to maintain.
+
+Session 12 — Creating API Tests
+
+Tool: GitHub Copilot Chat  
+Task: Create an API testing file for testing the TripMate REST API endpoints.  
+Main prompt: Asked Copilot to help create an `api-tests.http` file containing HTTP requests for testing the implemented REST API endpoints, including CRUD operations and validation cases.  
+How AI was used: Copilot explained how HTTP requests can be written and organized in a `.http` file, how to include request methods, URLs, headers, and JSON bodies, and how to test different API responses.  
+What was kept, changed, or rejected: Used the suggested structure for the API testing file and adapted the requests to match the actual TripMate routes, required fields, and validation rules. Reviewed and adjusted the test cases as the backend implementation changed.  
+What was learned: How to test REST API endpoints directly using HTTP requests, how to check response status codes and JSON responses, and why testing both valid and invalid input is important.
+
+Session 13 — Implementing the Weather Service
+
+Tool: GitHub Copilot Chat  
+Task: Implement a PHP service for retrieving current weather information for a destination using an external weather API.  
+Main prompt: Asked Copilot to help implement a `WeatherService` class that communicates with an external weather provider, validates the requested destination, and handles connection problems, timeouts, and unsuccessful API responses.  
+How AI was used: Copilot explained how to make HTTP requests using cURL in PHP, decode JSON responses, handle different HTTP status codes, and use exceptions to report errors. It also helped with understanding how to keep the external API communication inside a service class instead of placing it directly in a FlightPHP route.  
+What was kept, changed, or rejected: Used the suggested approach as a starting point and adapted it to the existing TripMate backend structure. Reviewed the error handling, added appropriate timeout handling and logging, and ensured that the API key is obtained from configuration rather than hardcoded in the service. Tested the weather endpoint with valid, missing, empty, and invalid destination parameters.  
+What was learned: How PHP can communicate with external APIs using cURL, how to process JSON responses, how to handle provider errors and timeouts, and why external API logic should be separated from route handling.
+
+Session 14 — Reviewing and Improving Service Classes
+
+Tool: GitHub Copilot Chat  
+Task: Review the TripMate service classes and improve their validation and error handling where necessary.  
+Main prompt: Asked Copilot to inspect the existing service classes and help identify possible validation problems, missing checks, and inconsistencies with the database structure and REST API requirements.  
+How AI was used: Copilot helped review the service methods, explain validation logic, and suggest improvements for checking required fields, data types, relationships between entities, and invalid input. It also helped identify cases where the existing validation needed to be adjusted.  
+What was kept, changed, or rejected: Reviewed the suggestions and applied relevant improvements to the existing service classes while keeping the established project structure and business rules. Checked that validation matched the actual database schema and tested the affected endpoints using the API testing file.  
+What was learned: How service classes handle business validation, why related database records must be checked before creating or updating data, and how reviewing edge cases can prevent invalid information from reaching the database.
 
 Issue 1 — JavaScript Error Between Pages
 
@@ -139,6 +176,33 @@ What was wrong: The initial suggestion used `SUM(amount)` without handling the c
 How it was noticed: Reviewed the query and considered what would happen when no expense records existed for a trip.
 How it was fixed: Used SQL's `COALESCE()` function with `SUM(amount)` so that an empty result is returned as zero.
 What was learned: Database queries should account for empty results and edge cases, not only situations where matching records already exist.
+
+Issue 5 — Incorrect OpenAPI Schema Definition
+
+Tool: GitHub Copilot Chat  
+Task: Review and correct the OpenAPI documentation for the TripMate REST API.  
+What was wrong: The generated OpenAPI documentation used `exclusiveMinimum: true` together with `minimum: 0` for expense amount validation. This syntax is not valid for OpenAPI 3.0.3, where `exclusiveMinimum` must contain a numeric value.  
+How it was noticed: While reviewing the `openapi.yaml` file, the schema definition was checked against the OpenAPI 3.0.3 specification.  
+How it was fixed: Replaced `exclusiveMinimum: true` with `exclusiveMinimum: 0` in the affected expense schemas so that the documentation correctly describes amounts greater than zero.  
+What was learned: OpenAPI documentation must follow the syntax of the selected specification version. Even when a schema looks reasonable, it should be checked for compatibility with the declared OpenAPI version.
+
+Issue 6 — Incorrect Expense Amount Validation
+
+Tool: GitHub Copilot Chat  
+Task: Review the validation rules for creating and updating expenses in `ExpenseService`.  
+What was wrong: The existing validation allowed an expense amount of zero, even though an expense should have an amount greater than zero.  
+How it was noticed: While reviewing the validation rules and testing the expense endpoint, the zero amount edge case was identified.  
+How it was fixed: Adjusted the expense-specific validation to reject amounts equal to or below zero, without changing the shared money validation used for trip budgets, where zero is allowed. Added and tested an API request with an amount of zero to confirm that the endpoint returns HTTP 400.  
+What was learned: Validation rules should reflect the meaning of individual fields. Shared validation methods should not be changed in a way that accidentally affects other parts of the application.
+
+Issue 7 — Incorrect Weather API Error Handling
+
+Tool: GitHub Copilot Chat  
+Task: Review the error handling in the TripMate weather service and its REST endpoint.  
+What was wrong: The initial error handling needed clearer distinctions between different external API failures, such as connection problems, timeouts, invalid provider responses, and destinations that could not be found.  
+How it was noticed: While reviewing the weather service and testing the endpoint with different destination values, it became clear that different failure situations needed different HTTP status codes and error messages.  
+How it was fixed: Improved the service exception handling so that different failures return appropriate status codes, including 404 for an unknown location, 502 for provider or response errors, 503 for service unavailability, and 504 for timeouts. Tested the endpoint with valid, missing, empty, and invalid destination parameters.  
+What was learned: External API failures should be handled according to their cause. Clear error handling makes the API more predictable and helps the frontend understand what went wrong.
 
 Future entries:
 Add entries as AI assistanceis used.
